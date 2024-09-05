@@ -244,7 +244,7 @@ const HotelViewPage = () => {
 
                                                                   <div className='d-flex-col justify-content-between align-items-end overflow-hidden' style={{backgroundColor: '#ffffff',height: '30vh', width: '40vw', marginTop:'20spx', borderRadius: '15px', opacity:'100%'}}>
 
-                                                                        <h2 className='' style={{ fontWeight: '300', fontFamily: 'Russo One , sans-serif',color: '#000036 ', marginTop: 5, marginLeft: 20,fontSize: '1.5rem',display: 'flex',alignItems: 'center'}}>
+                                                                        <h2 className='' style={{ fontWeight: '300', fontFamily: 'Russo One , sans-serif',color: '#000036 ', marginTop: '30px', marginLeft: 20,fontSize: '1.5rem',display: 'flex',alignItems: 'center'}}>
                                                                             Want to Book This one :{''}<FontAwesomeIcon icon={faBookReader} style={{
                                                                               height:'30px',
                                                                               marginLeft:'10px'
@@ -284,30 +284,29 @@ const HotelViewPage = () => {
                                                                                 </button>
 
                                                                           {/* Back Button */}
-                                                                          <Link to= '/'>
-                                                                              <button onClick={handleBookNow}
-                                                                                  style={{
-                                                                                    fontWeight: '600',
-                                                                                    fontFamily: 'IBM Plex Sans, sans-serif',
-                                                                                    backgroundColor: isHovered ? '#0088cc' : '#00aaff',
-                                                                                    color: '#ffffff',
-                                                                                    marginTop: 10,
-                                                                                    width: '15vw',
-                                                                                    height: '5vh',
-                                                                                    border: 'none',
-                                                                                    borderRadius: '10px',
-                                                                                    fontSize: '1.0rem',
-                                                                                    display: 'flex',
-                                                                                    alignItems: 'center',
-                                                                                    justifyContent: 'center',
-                                                                                    transition: 'background-color 0.3s ease',
-                                                                                  }}
-                                                                                  onMouseEnter={() => setIsHovered(true)}
-                                                                                  onMouseLeave={() => setIsHovered(false)}
-                                                                                >
-                                                                                  Back
-                                                                                </button>
-                                                                          </Link>        
+                                                                          
+                                                                                  <Link
+                                                                                  to='/'
+                                                                                    style={{
+                                                                                      fontWeight: '600',
+                                                                                      fontFamily: 'IBM Plex Sans, sans-serif',
+                                                                                      backgroundColor: '#f0f8ff',
+                                                                                      color: '#000000',
+                                                                                      marginTop: 10,
+                                                                                      width: '15vw',
+                                                                                      height: '5vh',
+                                                                                      border: '1px solid #000000', // Added a solid border with 2px width
+                                                                                      borderRadius: '10px',
+                                                                                      fontSize: '1.0rem',
+                                                                                      display: 'flex',
+                                                                                      alignItems: 'center',
+                                                                                      justifyContent: 'center',
+                                                                                      transition: 'background-color 0.3s ease',
+                                                                                    }}
+                                                                                  >
+                                                                                    Back
+                                                                                  </Link>
+                                                                                  
 
 
 

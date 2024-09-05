@@ -57,6 +57,24 @@ router.get("/get/:id", async (req, res) => {
   }
 });
 
+// Fetch a property by name
+router.get('/getHotel/:hotelName', async (req, res) => {
+  const {hotelName} = req.params;
+
+  try {
+    const hotel = await Property.findOne({ name: hotelName });
+    if (!hotel) {
+      return res.status(404).json({ message: "Hotel not found" });
+    }
+    res.status(200).json(hotel);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching hotel data', error });
+  }
+});
+
+
+
+
 // Update a property by ID
 router.put("/update/:Id", async (req, res) => {
   try {

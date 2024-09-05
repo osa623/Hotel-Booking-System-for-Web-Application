@@ -23,7 +23,7 @@ const propertySchema = new mongoose.Schema({
   lunchSupplement: { type: Number }, // Lunch Supplement
   dinnerSupplement: { type: Number }, // Dinner Supplement
   roomCategories: [roomCategorySchema], // Array of Room Categories
-  additionalCharges: { type: Number }, // Additional Charges for the room category
+  additionalCharges: { type: Number },
   photos: [{ type: String }], // URLs or paths of photos
 });
 

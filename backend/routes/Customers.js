@@ -5,13 +5,37 @@ const Customer = require('../models/Customer'); // Adjust path as needed
 // Create a new customer
 router.post('/add', async (req, res) => {
   try {
-    const newCustomer = new Customer(req.body);
+    const { name, age, checkinDate, checkoutDate, email, contact, adultsOnBoard, childrenOnBoard, feechildrencount, noneFeeChildrenCount, hotelName, roomType, numberOfRooms, mealOptions, extraNotes, totalAmount } = req.body;
+
+    // Create a new Customer instance with the provided data
+    const newCustomer = new Customer({
+      name,
+      age,
+      checkinDate,
+      checkoutDate,
+      email,
+      contact,
+      adultsOnBoard,
+      childrenOnBoard,
+      feechildrencount,
+      noneFeeChildrenCount,
+      hotelName,
+      roomType,
+      numberOfRooms,
+      mealOptions,
+      extraNotes,
+      totalAmount
+    });
+
+    // Save the new customer to the database
     await newCustomer.save();
     res.status(201).json(newCustomer);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    console.error('Error saving customer data:', error);
+    res.status(500).json({ message: 'Error saving customer data', error });
   }
 });
+
 
 // Get all customers
 router.get('/get', async (req, res) => {

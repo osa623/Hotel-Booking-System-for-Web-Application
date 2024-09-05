@@ -11,6 +11,7 @@ const customerSchema = new mongoose.Schema({
   childrenOnBoard: { type: Number, required: true, min: 0 }, // Number of children
   feechildrencount : { type: Number, required: true, min: 0 }, // Number of children above age limit 
   noneFeeChildrenCount : { type: Number, required: true, min: 0 },  // Number of children below age limit 
+  hotelName : { type: String, required: true}, 
   roomType: { type: String, required: true, trim: true },
   numberOfRooms: { type: Number, required: true, min: 1 },
   mealOptions: [{ type: String, enum: ['breakfast', 'lunch', 'dinner'] }],

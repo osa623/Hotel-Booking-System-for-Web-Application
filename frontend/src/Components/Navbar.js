@@ -4,6 +4,7 @@ import '../Styles/fonts.css';
 //icons
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHotel, faBookBookmark } from '@fortawesome/free-solid-svg-icons';
+import { Link, useNavigate } from 'react-router-dom';
 
 
 const Navbar = () => {
@@ -11,6 +12,7 @@ const Navbar = () => {
 
 
   const [hover, setHover] = useState(false);
+
 
 
   return (
@@ -68,28 +70,36 @@ const Navbar = () => {
       >
       </div>
 
-      <div 
-        className="d-flex align-items-center justify-content-center" 
-        style={{ 
-          height: '4rem', 
-          width: '10%', 
-          fontFamily: 'IBM Plex Sans, sans-serif',
-          color: '#ffffff',
-        }}
-      >
-          <FontAwesomeIcon
-            icon={faBookBookmark}
-            className={`transition ${hover ? 'text-[#ffffff]' : ''}`}
-            style={{
-              height: '40px',
-              cursor:'pointer',
-              transform: hover ? 'scale(1.2)' : 'scale(1)',
-              transition: 'transform 0.3s ease',
-            }}
-            onMouseEnter={() => setHover(true)}
-            onMouseLeave={() => setHover(false)}
-          />
-      </div>
+
+              <div 
+                className="d-flex align-items-center justify-content-center" 
+                style={{ 
+                  height: '4rem', 
+                  width: '10%', 
+                  fontFamily: 'IBM Plex Sans, sans-serif',
+                  color: '#ffffff',
+                }}
+              >
+                <a href='/myBookings'>
+                <FontAwesomeIcon
+                    icon={faBookBookmark}
+                    className={`transition ${hover ? 'text-[#ffffff]' : ''}`}
+                    style={{
+                      color:'[#ffffff]',
+                      height: '30px',
+                      cursor:'pointer',
+                      transform: hover ? 'scale(1.2)' : 'scale(1)',
+                      transition: 'transform 0.3s ease',
+                    }}
+                    onMouseEnter={() => setHover(true)}
+                    onMou
+                    seLeave={() => setHover(false)}
+                  />
+                </a>
+
+    
+              </div>
+            
     </div>
   );
 };

@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBaby, faCoffee, faDrumstickBite, faHotTub, faIceCream, faPeopleArrows, faPizzaSlice } from '@fortawesome/free-solid-svg-icons';
+import { faBaby, faBowlFood, faCoffee, faDrumstickBite, faHotTub, faIceCream, faPeopleArrows, faPeopleArrowsLeftRight, faPeopleCarry, faPeoplePulling, faPizzaSlice, faPortrait } from '@fortawesome/free-solid-svg-icons';
 
 const BookingPreview = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -20,7 +20,7 @@ const BookingPreview = () => {
     childrenOnBoard: 0,
     feechildrencount: 0,
     noneFeeChildrenCount: 0,
-    hotelName:'',
+    hotelName: '',
     roomType: '',
     numberOfRooms: 1,
     mealOptions: [],
@@ -32,13 +32,15 @@ const BookingPreview = () => {
   const { initialData, selectedRoom } = location.state || {};
   const navigate = useNavigate();
 
+
+
   useEffect(() => {
     if (initialData && selectedRoom) {
       setFormData(prevData => ({
         ...prevData,
-        propertyId: initialData._id || '',
         roomType: selectedRoom.roomType || '',
         roomPrice: selectedRoom.roomPrice || '',
+        hotelName : initialData.name || ''
       }));
       calculateTotalAmount({
         ...formData,
@@ -142,9 +144,23 @@ const BookingPreview = () => {
     // Add meal supplements to the total
     total += mealTotal;
   
-    // Determine if the check-in and check-out dates fall in winter or summer season
-    const checkinDate = new Date(data.checkinDate);
+    // Sample check-in and check-out dates
+    const checkinDate = new Date(data.checkinDate);  // Assuming data.checkinDate is in a valid date format
     const checkoutDate = new Date(data.checkoutDate);
+
+    // Calculate the number of days between the two dates
+    const calculateDaysBetween = (startDate, endDate) => {
+      const timeDifference = endDate - startDate; // Difference in milliseconds
+      const millisecondsPerDay = 1000 * 60 * 60 * 24; // Milliseconds in a day
+      const numberOfDays = Math.ceil(timeDifference / millisecondsPerDay); // Rounds up to the next whole number
+      return numberOfDays;
+    };
+
+    const numberOfDays = calculateDaysBetween(checkinDate, checkoutDate);
+ 
+
+    
+
   
     // Function to check if a date is within a specific range
     const isWithinRange = (date, startMonth, endMonth) => {
@@ -178,29 +194,34 @@ const BookingPreview = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
+    const calculatedChildrenOnBoard = Number(formData.feechildrencount) + Number(formData.noneFeeChildrenCount);
+  
     const postData = {
       ...formData,
       age: Number(formData.age),
       adultsOnBoard: Number(formData.adultsOnBoard),
-      childrenOnBoard: Number(formData.childrenOnBoard),
+      childrenOnBoard: calculatedChildrenOnBoard,
       feechildrencount: Number(formData.feechildrencount),
       noneFeeChildrenCount: Number(formData.noneFeeChildrenCount),
       numberOfRooms: Number(formData.numberOfRooms),
       totalAmount: Number(formData.totalAmount),
     };
 
+    console.log('Posting Data :', postData);
+  
     try {
       const response = await axios.post('http://localhost:5000/api/customers/add', postData, {
         headers: { 'Content-Type': 'application/json' }
       });
-      alert(`Booking Successful! Total Amount: $${postData.totalAmount.toFixed(2)}`);
+      alert(`Booking Successful! Total Amount: $${postData.totalAmount.toFixed(2)} HotelName : $${postData.hotelName}`);
       navigate('/myBookings', { state: { bookingDetails: response.data } });
     } catch (error) {
       console.error('There was an error!', error.response ? error.response.data : error.message);
       alert('An error occurred. Please try again later.');
     }
   };
+  
 
   if (isLoading) {
     return <div className='text-center'>Loading...</div>;
@@ -209,10 +230,13 @@ const BookingPreview = () => {
 
   return (
     <div className='container' style={{marginTop:'100px'}}>
+      <div className='d-flex justify-content-center align-items-center' style={{width:'auto'}}>
+      <h2 className="mb-4 text-center text-primary" style={{marginTop:'10px'}}>Booking Preview</h2>
+      </div>
 
-      <h2 className="mb-4 text-center text-primary">Booking Preview</h2>
+      
 
-      <div className="d-flex" style={{padding:'20px', height:'100vh'}}>
+      <div className="d-flex" style={{padding:'20px', height:'110vh'}}>
 
         <div className="col-lg-6 mb-4 justify-content-center align-items-center" style={{
                                   borderRadius: '15px', 
@@ -226,7 +250,7 @@ const BookingPreview = () => {
                <h3 className="mt-3 mx-3" style={{fontSize: '1.5rem', fontWeight: '500', fontFamily: 'IBM Plex Sans, sans-serif' }}>{' '}{propertyData?.name}</h3>
                <h3 className="mx-3" style={{fontSize: '0.8rem', fontWeight: '400', fontFamily: 'IBM Plex Sans, sans-serif' }}>{' '}{propertyData?.type}</h3>
                <h3 className="mx-3" style={{fontSize: '1.0rem', fontWeight: '400', fontFamily: 'IBM Plex Sans, sans-serif' }}>Selected Room :{' '}{formData?.roomType}</h3>
-               <h3 className="mx-3" style={{fontSize: '1.0rem', fontWeight: '400', fontFamily: 'IBM Plex Sans, sans-serif' }}>Room Price :{' '}{formData?.roomPrice}</h3>
+               <h3 className="mx-3" style={{fontSize: '1.0rem', fontWeight: '400', fontFamily: 'IBM Plex Sans, sans-serif' }}>Room Price :{' '}Rs.{formData?.roomPrice}.00</h3>
 
                </div>
           </div>   
@@ -248,13 +272,13 @@ const BookingPreview = () => {
                           <div className='mb-3'>
                             <h6 className='d-flex align-items-center' style={{ fontSize: '1.2rem', fontWeight: '700', fontFamily: 'IBM Plex Sans, sans-serif' }}>
                             <FontAwesomeIcon icon={faBaby} className='mx-2'/><span className='me-2' style={{ fontSize: '1.0rem', fontWeight: '400', fontFamily: 'IBM Plex Sans, sans-serif'}}>Child Supplement:</span>
-                              <span className='badge bg-info'>{propertyData?.childSupplement ?? 'N/A'}</span>
+                              <span className='badge bg-info'>Rs.{propertyData?.childSupplement ?? 'N/A'}.00</span>
                             </h6>
                           </div>
-                          <div className='mb-3'>
+                          <div className='mb-3' style={{marginLeft:'20px'}}>
                             <h6 className='d-flex align-items-center' style={{ fontSize: '1.2rem', fontWeight: '700', fontFamily: 'IBM Plex Sans, sans-serif' }}>
                               <FontAwesomeIcon icon={faPeopleArrows} className='mx-2'/><span className='me-2' style={{ fontSize: '1.0rem', fontWeight: '400', fontFamily: 'IBM Plex Sans, sans-serif'}}>Adult Supplement:</span>
-                              <span className='badge bg-info'>{propertyData?.chargesPerHead ?? 'N/A'}</span>
+                              <span className='badge bg-info'>Rs.{propertyData?.chargesPerHead ?? 'N/A'}.00</span>
                             </h6>
                           </div>
                         </div>
@@ -265,41 +289,41 @@ const BookingPreview = () => {
                           <div className='mb-3'>
                             <h6 className='d-flex align-items-center' style={{ fontSize: '1.2rem', fontWeight: '700', fontFamily: 'IBM Plex Sans, sans-serif' }}>
                             <FontAwesomeIcon icon={faHotTub} className='mx-2'/><span className='me-2' style={{ fontSize: '1.0rem', fontWeight: '400', fontFamily: 'IBM Plex Sans, sans-serif'}}>Winter Supplement:</span>
-                              <span className='badge bg-info'>{propertyData?.winterSupplement ?? 'N/A'}</span>
+                              <span className='badge bg-info'>Rs.{propertyData?.winterSupplement ?? 'N/A'}.00</span>
                             </h6>
                           </div>
-                          <div className='mb-3'>
+                          <div className='mb-3' style={{marginLeft:'20px'}}>
                             <h6 className='d-flex align-items-center' style={{ fontSize: '1.2rem', fontWeight: '700', fontFamily: 'IBM Plex Sans, sans-serif' }}>
                             <FontAwesomeIcon icon={faIceCream} className='mx-2'/><span className='me-2' style={{ fontSize: '1.0rem', fontWeight: '400', fontFamily: 'IBM Plex Sans, sans-serif'}}>Summer Supplement:</span>
-                              <span className='badge bg-info'>{propertyData?.summerSupplement ?? 'N/A'}</span>
+                              <span className='badge bg-info'>Rs.{propertyData?.summerSupplement ?? 'N/A'}.00</span>
                             </h6>
                           </div>
                         </div>
 
 
-                       <h5 className='card-title' style={{ fontSize: '1.5rem', fontWeight: '700', fontFamily: 'IBM Plex Sans, sans-serif', marginBottom:'40px' }}>Meal Service:</h5>
+                       <h5 className='card-title' style={{ fontSize: '1.5rem', fontWeight: '700', fontFamily: 'IBM Plex Sans, sans-serif', marginBottom:'40px', marginTop:'20px' }}>Meal Service:</h5>
 
                         {/* 3rd Col */}
                         <div className='d-flex justify-content-between' style={{marginTop:'10px'}}>
                           <div className='mb-3'>
                             <h6 className='d-flex align-items-center' style={{ fontSize: '1.2rem', fontWeight: '700', fontFamily: 'IBM Plex Sans, sans-serif' }}>
                             <FontAwesomeIcon icon={faCoffee} className='mx-2'/><span className='me-2' style={{ fontSize: '1.0rem', fontWeight: '400', fontFamily: 'IBM Plex Sans, sans-serif'}}>Breakfast:</span>
-                              <span className='badge bg-info'>{propertyData?.breakfastSupplement ?? 'N/A'}</span>
+                              <span className='badge bg-info'>Rs.{propertyData?.breakfastSupplement ?? 'N/A'}.00</span>
                             </h6>
                           </div>
                           <div className='mb-3'>
                             <h6 className='d-flex align-items-center' style={{ fontSize: '1.2rem', fontWeight: '700', fontFamily: 'IBM Plex Sans, sans-serif' }}>
                             <FontAwesomeIcon icon={faPizzaSlice} className='mx-2'/><span className='me-2' style={{ fontSize: '1.0rem', fontWeight: '400', fontFamily: 'IBM Plex Sans, sans-serif'}}>Lunch:</span>
-                              <span className='badge bg-info'>{propertyData?.lunchSupplement ?? 'N/A'}</span>
-                            </h6>
-                          </div>
-                          <div className='mb-3'>
-                            <h6 className='d-flex align-items-center' style={{ fontSize: '1.2rem', fontWeight: '700', fontFamily: 'IBM Plex Sans, sans-serif' }}>
-                            <FontAwesomeIcon icon={faDrumstickBite} className='mx-2'/><span className='me-2' style={{ fontSize: '1.0rem', fontWeight: '400', fontFamily: 'IBM Plex Sans, sans-serif'}}>Dinner:</span>
-                              <span className='badge bg-info'>{propertyData?.dinnerSupplement ?? 'N/A'}</span>
+                              <span className='badge bg-info'>Rs.{propertyData?.lunchSupplement ?? 'N/A'}.00</span>
                             </h6>
                           </div>
                         </div>
+                        <div className='mb-3'>
+                            <h6 className='d-flex align-items-center' style={{ fontSize: '1.2rem', fontWeight: '700', fontFamily: 'IBM Plex Sans, sans-serif' }}>
+                            <FontAwesomeIcon icon={faDrumstickBite} className='mx-2'/><span className='me-2' style={{ fontSize: '1.0rem', fontWeight: '400', fontFamily: 'IBM Plex Sans, sans-serif'}}>Dinner:</span>
+                              <span className='badge bg-info'>Rs.{propertyData?.dinnerSupplement ?? 'N/A'}.00</span>
+                            </h6>
+                          </div>
 
                         </div>
                       </div>
@@ -309,7 +333,7 @@ const BookingPreview = () => {
 
         </div>
         
-        <div className="d-flex-col" style={{padding:'40px', width:'50vw', height:'100vh', overflowY:'auto',
+        <div className="d-flex-col" style={{padding:'40px', width:'50vw', height:'100vh', overflowY:'auto', overflowX:'hidden',
                                   borderRadius: '15px', 
                                   marginRight:'10px',
                                   opacity:'100%',
@@ -317,7 +341,7 @@ const BookingPreview = () => {
                                   boxSizing: 'border-box' }}>
                 <form onSubmit={handleSubmit}>
 
-                <h5 className='card-title' style={{ fontSize: '1.5rem', fontWeight: '700', fontFamily: 'IBM Plex Sans, sans-serif', marginBottom:'40px' }}>Hotel Supplements:</h5>
+                <h5 className='card-title' style={{ fontSize: '1.5rem', fontWeight: '500', fontFamily: 'IBM Plex Sans, sans-serif', marginBottom:'40px' }}><FontAwesomeIcon icon={faPortrait} className='mx-2'/>{''}Reservation Holder Details</h5>
 
 
                     <div className='d-flex align-items-center justify-content-start' style={{width:'40vw'}}>
@@ -411,7 +435,7 @@ const BookingPreview = () => {
 
                           </div>                
 
-                          <h5 className='card-title' style={{ fontSize: '1.5rem', fontWeight: '500', fontFamily: 'IBM Plex Sans, sans-serif', marginBottom:'40px', marginTop:'20px' }}>Onboarding Details:</h5>
+                          <h5 className='card-title' style={{ fontSize: '1.5rem', fontWeight: '500', fontFamily: 'IBM Plex Sans, sans-serif', marginBottom:'40px', marginTop:'20px' }}><FontAwesomeIcon icon={faPeopleArrowsLeftRight} className='mx-2'/>{''}Onboarding Details:</h5>
                           
 
                           <div className='d-flex align-items-center justify-content-start' style={{ width: '40vw' }}>
@@ -486,9 +510,23 @@ const BookingPreview = () => {
                                     </div>
 
                            
-            <div className='d-flex align-items-center justify-content-start' style={{width:'40vw'}}>   
+            <div className='d-flex align-items-center justify-content-start' style={{width:'35vw'}}> 
 
-                          <div className="form-group mb-3">
+
+                       <div className="form-group mb-3">
+                            <label htmlFor="hotelName" className="form-label font-weight-bold">Property Name</label>
+                            <input
+                              type="text"
+                              className="form-control"
+                              id="hotelName"
+                              name="hotelName"
+                              value={formData.hotelName}
+                              onChange={handleChange}
+                              readOnly
+                              style={{width:'10vw'}}  />
+                          </div>  
+
+                          <div className="form-group mb-3" style={{marginLeft:'30px'}}>
                             <label htmlFor="roomName" className="form-label font-weight-bold" style={{ fontFamily: 'IBM Plex Sans, sans-serif' }}>
                               Room Name
                             </label>
@@ -500,7 +538,7 @@ const BookingPreview = () => {
                               value={formData.roomType}
                               onChange={handleChange}
                               readOnly
-                            />
+                              style={{width:'10vw'}} />
                           </div>
 
 
@@ -516,12 +554,12 @@ const BookingPreview = () => {
                               onChange={handleChange}
                               min="1"
                               readOnly
-                            />
+                              style={{width:'10vw'}}  />
                           </div>
              </div>                           
 
                   <fieldset className="d-flex form-group mb-3 align-items-center justify-content-start " style={{marginTop:'20px', marginBottom:'20px'}}>
-                    <legend className="form-label font-weight-bold"  style={{ fontSize: '1.5rem', fontWeight: '500', fontFamily: 'IBM Plex Sans, sans-serif', marginBottom:'10px', marginTop:'10px' }}>Meal Options</legend>
+                    <legend className="form-label font-weight-bold"  style={{ fontSize: '1.5rem', fontWeight: '500', fontFamily: 'IBM Plex Sans, sans-serif', marginBottom:'10px', marginTop:'10px' }}><FontAwesomeIcon icon={faBowlFood} className='mx-2'/>{''}Meal Options</legend>
                     <div className="form-check">
                       <input
                         type="checkbox"
@@ -578,17 +616,16 @@ const BookingPreview = () => {
                       className="form-control"
                       id="totalAmount"
                       name="totalAmount"
-                      value={`$${formData.totalAmount.toFixed(2)}`}
+                      value={`${formData.totalAmount.toFixed(2)}`}
                       readOnly
                     />
                   </div>
 
-                  <div className='d-flex form-group mb-3 align-items-center justify-content-center' style={{marginTop:'20px', width:'40vw', marginBottom:'20px'}}>
+                  <div className='d-flex form-group mb-3 align-items-center justify-content-center' style={{marginTop:'20px', width:'35vw', marginBottom:'20px'}}>
 
                           <button type="submit" className="btn btn-primary" style={{width:'15vw',  borderRadius:'20px'}}>Confirm Booking</button>
 
-                          <button type="back" className="btn btn-primary" style={{width:'15vw', backgroundColor:'#ffffff', marginLeft:'50px', borderRadius:'20px', color:'#000000'}}>Back</button>
-                  </div>                          
+                 </div>
                 </form>
         </div>
       </div>
