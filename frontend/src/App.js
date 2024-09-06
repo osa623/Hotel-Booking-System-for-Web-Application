@@ -8,6 +8,7 @@ import Loading from './Components/Loading';
 import HotelViewPage from './Pages/HotelViewPage';
 import BookingPreview from './Pages/BookingPreview';
 import MyBooking from './Pages/MyBooking';
+import EditBooking from './Pages/EditBooking';
 //import UpdateBooking from './Pages/UpdateBooking';
 
 //other components
@@ -43,7 +44,7 @@ const AppContent = () => {
         <Route path="/property/:id" element={<HotelViewPage/>} />
         <Route path="/booking_Preview" element={<BookingPreview/>} />
         <Route path="/myBookings" element={<MyBooking/>} />
-        {/*<Route path="/updateBooking/:id" element={<UpdateBooking/>} />*/}
+        <Route path="/editBooking/:id" element={<EditBooking/>} />
       </Routes>
 
     )}
